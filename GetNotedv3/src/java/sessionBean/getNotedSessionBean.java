@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.ejb.LocalBean;
 import javax.persistence.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 /**
@@ -41,5 +42,28 @@ public class getNotedSessionBean {
         else
             return null;
     }
-    
-}
+    public void registerUser(HttpServletRequest request){
+       String userAt[] = {"username", "password","firstName","lastName", "email","school"};
+            String userVal[] = new String[6];
+            
+            String studentAt[]={"major","yearOfGraduation"};
+            String studentVal[]=new String[2];
+            String professorAttribute="";
+            int i;
+            for(i=0; i<userAt.length; i++){
+                userVal[i]=request.getParameter(userAt[i]);
+            }
+            GeneralizedQueries.insert("user", userVal, userAt);
+            if((request.getParameter("type")).equals("student")){
+                for(i=0; i<studentAt.length; i++) studentVal[i]= request.getParameter(studentAt[i]);
+                GeneralizedQueries.insert("student", studentVal, studentAt);
+
+            }
+            else{
+                professorAttribute= request.getParameter("department");
+                String pa[]= {"department"};
+                String pv[]= {professorAttribute};
+                GeneralizedQueries.insert("professor",pa, pv);
+            }
+        } 
+    }
